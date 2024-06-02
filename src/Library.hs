@@ -163,3 +163,53 @@ mejorEntreDos postre hechizo1 hechizo2
 esMejor :: Postre -> Hechizo -> Hechizo -> Bool   
 esMejor postre hechizo1 hechizo2 = (length . sabores . hechizo1 ) postre > (length . sabores . hechizo2 ) postre 
 
+-- 3.INFINITA MAGIA --
+
+-- A) Construir una lista infinita de postres, y construir un mago con infinitos hechizos.
+
+listaInfinitaDePostres :: [Postre]
+listaInfinitaDePostres = cycle [bizcochoBorracho,tartaDeMelaza]
+
+listaInfinitaDeBizcochos :: [Postre]
+listaInfinitaDeBizcochos = repeat bizcochoBorracho
+
+magoConHechizosInfinitos :: Mago
+magoConHechizosInfinitos = UnMago "Mago Infinito" (cycle [incendio,immobulus]) 1
+
+
+-- B) Suponiendo que hay una mesa con infinitos postres, y pregunto si algún hechizo los deja listos 
+-- ¿Existe alguna consulta que pueda hacer para que me sepa dar una respuesta? Justificar conceptualmente.
+
+--dejaranListos :: [Postre] -> Hechizo -> Bool
+--dejaranListos postres hechizo = all (estaListo . hechizo) postres
+
+-- Como la funcion dejaranListos evalua con una lista de postres y un hechizo, si dicho hechizo los dejara listo a TODOS. 
+-- Como es necesario evaluar a TODOS los postres de la lista para llegar a un resultado (True = si los deja listos a TODOS, False = en el caso contrario)
+-- CASO DEL TRUE --> Entonces, si la lista de los postres es INFINITA, nunca voy a poder llegar a verificar para cada uno de los postres si cumplen la condicion de estarListo
+-- CASO DEL FALSE --> PEROO, aunque la lista sea infinita, con que uno de los postres ya NO cumpla con la condicion de estarListo, entonces no va a ser necesario seguir recorriendo la lista
+-- (si un postre NO estaListo ---> entonces TODOS los prostes NO estanListos (ya que tengo ese postre que NO ESTA LISTO dentro de el conjunto))
+-- Esto es posible gracias a la evaluacion perozosa que tiene Haskell, como encuentre uno que tire False en estaListo entonces corta y devuelve False en dejarListos (NO sigue recorrindo la lista infinita)  
+
+-- Ejemplo de consulta:
+-- > dejaranListos listaInfinitaDeBizcochos immobulus
+-- FALSE
+
+-- Ejemplo de consulta:
+-- > dejaranListos listaInfinitaDeBizcochos avadakedavra
+-- FALSE
+
+-- C) Suponiendo que un mago tiene infinitos hechizos 
+-- ¿Existe algún caso en el que se puede encontrar al mejor hechizo? Justificar conceptualmente.
+
+--mejorHechizo :: Postre -> Mago -> Hechizo
+--mejorHechizo postre mago = foldl1 (mejorEntreDos postre) (hechizos mago)  
+
+--mejorEntreDos :: Postre -> Hechizo -> Hechizo -> Hechizo
+--mejorEntreDos postre hechizo1 hechizo2 
+--    | length (sabores (hechizo1 postre)) > length (sabores (hechizo2 postre)) = hechizo1
+--    | otherwise = hechizo1
+
+-- NO hay ningun caso que pueda encontrar el mejor hechizo de un mago con hechizos infinitos, 
+-- porque para buscar el mejor tengo que recorrer toda la lista de hechizos que tiene el mago para ir comparando entre ellos, 
+-- Es decir, aunque Haskell tenga un evaluacion perezosa (lazy evaluation), en esta caso NO tengo escapacion, tengo que evaluar
+-- todos los elementos de la lista :( !!
